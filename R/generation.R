@@ -39,6 +39,34 @@ get.fixed.value <- function(param, parameters)
   }
 }
 
+## Calculates the parameter bounds when parameters domain is dependent
+getDependentBound <- function(parameters, param, configuration)
+{
+  values <- parameters$domain[[param]]
+  if (is.expression(values)) {
+    # Depends contains parameters that enable param and parameters that define
+    # its domain. If this is a partial configuration, we need only the latter.
+    # Use names() here in case the configuration is simply a list.
+    deps <- intersect(names(configuration), parameters$depends[[param]])
+    # If it depends on a parameter that is disabled, then this is disabled.
+    if (anyNA(configuration[deps])) return(NA)
+
+    values <- sapply(values, eval, configuration)
+    irace.assert(all(is.finite(values)))
+    # Value gets truncated (defined from robotics initial requirements)
+    if (parameters$types[param] == "i") values <- as.integer(values)
+    if (values[1] > values[2]) {
+      irace.error ("Invalid domain (", paste0(values, collapse=", "),
+                   ") generated for parameter '", param,
+                   "' that depends on parameters (",
+                   paste0(parameters$depends[[param]], collapse=", "),
+                   "). This is NOT a bug in irace. Check the definition of these parameters.")
+    }
+  }
+
+  return(values)
+}
+
 ### Uniform sampling for the initial generation
 sampleUniform <- function (parameters, nbConfigurations, digits,
                            forbidden = NULL, repair = NULL)
@@ -69,8 +97,9 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
-        } else if (currentType %in% c("i", "r")) {
-          newVal <- sample.unif(currentParameter, parameters, currentType, digits)
+        } else if (currentType %in% c("i","r")) {
+          newVal <- sample.unif(currentParameter, parameters, currentType, digits,
+				configuration = configuration)
         } else {
           irace.assert(currentType %in% c("c","o"))
           possibleValues <- parameters$domain[[currentParameter]]
@@ -149,11 +178,21 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           if (is.na(mean)) {
             # The elite parent does not have any value for this parameter,
             # let's sample uniformly.
-            newVal <- sample.unif(currentParameter, parameters, currentType, digits)
-                                                                                             
+            newVal <- sample.unif(currentParameter, parameters, currentType, digits,
+	                          configuration = configuration)
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
-            newVal <- sample.norm(mean, stdDev, currentParameter, parameters, currentType, digits)
+            # The standard deviation can be NA only for dependent parameters.
+            # FIXME: Leslie, could you explain when it is NA?
+            if (is.na(stdDev)) {
+              irace.assert(parameters$isDependent[[currentParameter]])
+              # We initialise the model now using the new values of the configuration
+              stdDev <- init.model.dependent(currentParameter, parameters, configuration)
+              # FIXME: Shouldn't this NA be a value from the parent?
+              model[[currentParameter]][[as.character(idEliteParent)]] <- c(stdDev, NA)
+            }
+            newVal <- sample.norm(mean, stdDev, currentParameter, parameters, currentType, digits,
+                                  configuration = configuration)
           }
         } else if (currentType == "o") {
           possibleValues <- paramDomain(currentParameter, parameters)  
@@ -288,15 +327,23 @@ numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
 }
 
 # Sample value for a numerical parameter.
-sample.unif <- function(param, parameters, type, digits = NULL)
+sample.unif <- function(param, parameters, type, digits = NULL, configuration = NULL)
 {
-  lowerBound <- paramLowerBound(param, parameters)
-  upperBound <- paramUpperBound(param, parameters)
-  transf <- parameters$transform[[param]]
+  domain <- getDependentBound(parameters, param, configuration)
+
+  # Depedent domains could be not available because of inactivity of parameters
+  # on which they are depedent. In this case, the dependent parameter becomes 
+  # not active and we return NA.
+  if (anyNA(domain)) return(NA)
+
+  lowerBound <- domain[1]
+  upperBound <- domain[2]
+
   if (type == "i") {
     # +1 for correct rounding before floor()
     upperBound <- 1L + upperBound
   }
+  transf <- parameters$transform[[param]]
   if (transf == "log") {
     value <- runif(1, min = 0, max = 1)
     value <- transform.from.log(value, transf, lowerBound, upperBound)
@@ -307,17 +354,26 @@ sample.unif <- function(param, parameters, type, digits = NULL)
   return(value)
 }
 
-sample.norm <- function(mean, sd, param, parameters, type, digits = NULL)
+sample.norm <- function(mean, sd, param, parameters, type, digits = NULL, 
+                        configuration = NULL)
 {
-  lowerBound <- paramLowerBound(param, parameters)
-  upperBound <- paramUpperBound(param, parameters)
-  transf <- parameters$transform[[param]]
+  domain <- getDependentBound(parameters, param, configuration)
+
+  # Depedent domains could be not available because of inactivity of parameters
+  # on which they are depedent. In this case, the dependent parameter becomes 
+  # not active and we return NA.
+  if (anyNA(domain)) return(NA)
+
+  lowerBound <- domain[1]
+  upperBound <- domain[2]
+
   if (type == "i") {
     upperBound <- 1L + upperBound
     # Because negative domains are log-transformed to positive domains.
     mean <- mean + 0.5
   }
   
+  transf <- parameters$transform[[param]]
   if (transf == "log") {
     trMean <- transform.to.log(mean, transf, lowerBound, upperBound)
     value <- rtnorm(1, trMean, sd, lower = 0, upper = 1)

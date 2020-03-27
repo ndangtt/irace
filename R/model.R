@@ -26,12 +26,17 @@ initialiseModel <- function (parameters, configurations, digits)
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
     }
+
     param <- list()
     for (indexConfig in seq_len(nbConfigurations)) {
       idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
       # Assign current parameter value to model
       if (type %in% c("i","r")) {
         value[2] <- configurations[indexConfig, currentParameter]
+        if (parameters$isDependent[[currentParameter]]) {
+          value[1] <- init.model.dependent(currentParameter, parameters,
+                                           configurations[indexConfig,,drop=FALSE])
+        }
       }
       param[[idCurrentConfig]] <- value
     }
@@ -153,9 +158,9 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
         if (type == "i" || type == "r") {
-          value <- init.model.numeric(param, parameters)
-          # We keep the value of the configuration as last known
-          value[2] <- configurations[id, param]
+          value <- c(init.model.numeric(param, parameters),
+                     # We keep the value of the configuration as last known
+                     configurations[id, param])
         } else {
           irace.assert(type == "o")
           value <- (length(parameters$domain[[param]]) - 1) / 2
@@ -171,18 +176,39 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 }
 
 # Initialise model in case of numerical variables.
-# it retuns an array size 2, first number indicates the 
+# it retuns an array size 2, first number indicates the
 # standard deviation and second the last known value (initially NA)
 init.model.numeric <- function(param, parameters)
 {
-  lower <- paramLowerBound(param, parameters)
-  upper <- paramUpperBound(param, parameters)
+  # This assumes that the model for dependent parameters is set independently
+  # based on each configuration values after this function.
+  if (parameters$isDependent[[param]]) {
+    return(NA)
+  }
+
   transf <- parameters$transform[[param]]
   if (transf == "log") {
-    lower <- 0
-    upper <- 1
+    domain <- c(0,1)
+  } else {
+    domain <- parameters$domain[[param]]
   }
-  value <- (upper - lower) / 2.0
+  value <- (domain[2] - domain[1]) / 2.0
   irace.assert(is.finite(value))
-  return(c(value, NA))
+  return(value)
+}
+
+# Intialise model of dependent numerical parameters if possible.
+init.model.dependent <- function (param, parameters, configuration)
+{
+  # Check if parameter is active otherwise we return NA value and
+  # model should be initialised later
+  if (!conditionsSatisfied (parameters, configuration, param)) {
+    return (NA)
+  }
+  
+  domain <- sapply(parameters$domain[[param]], eval, configuration)
+  # Calculate standard deviation for the model
+  value <- (domain[2] - domain[1]) / 2.0
+  irace.assert(all(is.finite(value)))
+  return(value) 
 }
