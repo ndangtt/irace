@@ -33,10 +33,6 @@ initialiseModel <- function (parameters, configurations, digits)
       # Assign current parameter value to model
       if (type %in% c("i","r")) {
         value[2] <- configurations[indexConfig, currentParameter]
-        if (parameters$isDependent[[currentParameter]]) {
-          value[1] <- init.model.dependent(currentParameter, parameters,
-                                           configurations[indexConfig,,drop=FALSE])
-        }
       }
       param[[idCurrentConfig]] <- value
     }
@@ -180,10 +176,12 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 # standard deviation and second the last known value (initially NA)
 init.model.numeric <- function(param, parameters)
 {
-  # This assumes that the model for dependent parameters is set independently
-  # based on each configuration values after this function.
+  # Dependent parameters define the standard deviation as
+  # a portion of the size of the domain interval. In this case,
+  # 0.5 indicates half of the interval, equivalent  to
+  # (domain[2] - domain[1]) * 0.5
   if (parameters$isDependent[[param]]) {
-    return(NA)
+    return(0.5)
   }
 
   transf <- parameters$transform[[param]]
@@ -195,20 +193,4 @@ init.model.numeric <- function(param, parameters)
   value <- (domain[2] - domain[1]) / 2.0
   irace.assert(is.finite(value))
   return(value)
-}
-
-# Intialise model of dependent numerical parameters if possible.
-init.model.dependent <- function (param, parameters, configuration)
-{
-  # Check if parameter is active otherwise we return NA value and
-  # model should be initialised later
-  if (!conditionsSatisfied (parameters, configuration, param)) {
-    return (NA)
-  }
-  
-  domain <- sapply(parameters$domain[[param]], eval, configuration)
-  # Calculate standard deviation for the model
-  value <- (domain[2] - domain[1]) / 2.0
-  irace.assert(all(is.finite(value)))
-  return(value) 
 }

@@ -172,24 +172,23 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled
         } else if (currentType %in% c("i", "r")) {
+          domain <- getDependentBound(parameters, currentParameter, configuration)
           mean <- as.numeric(eliteParent[currentParameter])
-          # If there is not value we obtain it from the model
+          # If there is not value we obtain it from the model or the mean obtained is
+          # not in the current domain, this can happen when using dependent domains
           if (is.na(mean)) mean <- model[[currentParameter]][[as.character(idEliteParent)]][2]
-          if (is.na(mean)) {
+          if (is.na(mean) || !inNumericDomain(mean, domain)) {
             # The elite parent does not have any value for this parameter,
             # let's sample uniformly.
             newVal <- sample.unif(currentParameter, parameters, currentType, digits,
 	                          configuration = configuration)
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
-            # The standard deviation can be NA only for dependent parameters.
-            # FIXME: Leslie, could you explain when it is NA?
-            if (is.na(stdDev)) {
-              irace.assert(parameters$isDependent[[currentParameter]])
-              # We initialise the model now using the new values of the configuration
-              stdDev <- init.model.dependent(currentParameter, parameters, configuration)
-              # FIXME: Shouldn't this NA be a value from the parent?
-              model[[currentParameter]][[as.character(idEliteParent)]] <- c(stdDev, NA)
+            # If parameters are dependent standard deviation must be computed
+            # based on the current domain
+            if (parameters$isDependent[currentParameter]) {
+              # Conditions should be satisfied for the parameter, thus domain cannot be NA
+              stdDev <- (domain[2] - domain[1]) * stdDev
             }
             newVal <- sample.norm(mean, stdDev, currentParameter, parameters, currentType, digits,
                                   configuration = configuration)

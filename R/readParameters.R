@@ -357,7 +357,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
           errReadParameters (filename, nbLines, NULL,
                              "for parameter type 'i' values must be integers (",
                              result$match, ") for parameter '", param.name, "'")
-        }
       }
       
       # Time to parse dependent domains or check values
@@ -441,6 +440,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     irace.error("No parameter definition found: ",
                 "check that the parameter file is not empty")
   }
+  print(parameters$names)
+  print(parameters$domain)
   
   # Generate dependency flag
   # FIXME: check if we really need this vector
@@ -450,7 +451,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     names(parameters$switches) <- 
       names(parameters$domain) <- 
         names(parameters$isFixed) <-
-          names(parameters$hierarchy) <- 
             names(parameters$transform) <-
               names(parameters$isDependent) <- parameters$names
 
@@ -458,6 +458,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
   ## thus we do not byte-compile them; but we could use
   ## all.vars(.Internal(disassemble(condition))[[3]][[1]])
+  ## LESLIE: should we make then an all.vars in utils.R so we can
+  ##   use it without problems?
   parameters$depends <- lapply(parameters$domain, all.vars)
   # Check that dependencies are ok
   check_parameter_dependencies(parameters)
