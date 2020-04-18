@@ -224,7 +224,7 @@
 <a href="#irace-2-3" class="anchor"></a>irace 2.3<small> 2017-04-26 </small>
 </h1>
 <ul>
-<li>Fix bug that will cause iraceResults$experimentLog to count calls to targetEvaluator as experiments, even if no call to targetRunner was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li>
+<li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to targetEvaluator as experiments, even if no call to targetRunner was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li>
 </ul>
 </div>
     <div id="irace-2-2" class="section level1">
@@ -249,7 +249,7 @@
 <li><p>Update manual and vignette with details about the expected arguments and return value of targetRunner and targetEvaluator. (Manuel López-Ibáñez)</p></li>
 <li><p>Many updates to the User Guide vignette. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix \dontrun example in irace-package.Rd (Manuel López-Ibáñez)</p></li>
-<li><p>Fix bug: If testInstances contains duplicates, results of testing are not correctly saved in iraceResults<span class="math inline"><em>t</em><em>e</em><em>s</em><em>t</em><em>i</em><em>n</em><em>g</em></span>experiments nor reported correctly at the end of a run. Now unique IDs of the form 1t, 2t, … are used for each testing instance. These IDs are used for the rownames of iraceResults<span class="math inline"><em>t</em><em>e</em><em>s</em><em>t</em><em>i</em><em>n</em><em>g</em></span>experiments and the names of the scenario<span class="math inline"><em>t</em><em>e</em><em>s</em><em>t</em><em>I</em><em>n</em><em>s</em><em>t</em><em>a</em><em>n</em><em>c</em><em>e</em><em>s</em><em>a</em><em>n</em><em>d</em><em>i</em><em>r</em><em>a</em><em>c</em><em>e</em><em>R</em><em>e</em><em>s</em><em>u</em><em>l</em><em>t</em><em>s</em></span>testing$seeds vectors. (Manuel López-Ibáñez)</p></li>
+<li><p>Fix bug: If testInstances contains duplicates, results of testing are not correctly saved in <code>iraceResults$testing$experiments</code> nor reported correctly at the end of a run. Now unique IDs of the form 1t, 2t, … are used for each testing instance. These IDs are used for the rownames of <code>iraceResults$testing$experiments</code> and the names of the <code>scenario$testInstances</code> and <code>iraceResults$testing$seeds</code> vectors. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix bug where irace keeps retrying the target-runner call even if it succeeds. (Manuel López-Ibáñez)</p></li>
 <li>New command-line parameter</li>
 </ul>
@@ -409,7 +409,7 @@
 <li><p>More concise output.</p></li>
 <li><p>The parameters expName and expDescription are now useless and they were removed.</p></li>
 <li><p>Faster computation of similar candidates (Jeremie Dubois-Lacoste and Leslie Pérez Cáceres).</p></li>
-<li><p>Fix bug when saving instances in tunerResults$experiments.</p></li>
+<li><p>Fix bug when saving instances in <code>tunerResults$experiments</code>.</p></li>
 <li><p><code><a href="../reference/irace.cmdline.html">irace.cmdline ("--help")</a></code> does not try to quit R anymore.</p></li>
 </ul>
 </div>
