@@ -136,8 +136,8 @@
 <pre><code>value &gt;= 1L &amp;&amp; value &lt;= length(possibleValues) is not TRUE</code></pre>
 </li>
 <li><p>The <code>irace</code> executable (<code>irace.exe</code> on Windows) is a compiled binary instead of a script. On Windows, <code>irace.exe</code> replaces <code>irace.bat</code> (Manuel López-Ibáñez)</p></li>
-<li><p>inst/examples/Spear contains the Spear (SAT solver) configuration scenario. (Manuel López-Ibáñez)</p></li>
-<li><p>Fixed bug when reporting minimum maxTime required. (Reported by Luciana Salete Buriol, fixed by Manuel López-Ibáñez)</p></li>
+<li><p><code>inst/examples/Spear</code> contains the Spear (SAT solver) configuration scenario. (Manuel López-Ibáñez)</p></li>
+<li><p>Fixed bug when reporting minimum <code>maxTime</code> required. (Reported by Luciana Salete Buriol, fixed by Manuel López-Ibáñez)</p></li>
 <li>
 <p>Fixed bug detected by assert:</p>
 <div class="sourceCode" id="cb2"><pre class="r">all(apply(!is.na(elite.data$experiments), 1, any)) is not TRUE</pre></div>
@@ -161,10 +161,10 @@
 <ul>
 <li><p>Fix <code>irace --check --parallel 2</code> on Windows. (Manuel López-Ibáñez)</p></li>
 <li><p>Values of real-valued parameter are now printed with sufficient precision to satisfy <code>digits</code> (up to <code>digits=15</code>). (Manuel López-Ibáñez)</p></li>
-<li><p>It is possible to specify boundMax without capping. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
+<li><p>It is possible to specify <code>boundMax</code> without capping. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 <li><p><code>irace --check</code> will exit with code 1 if the check is unsuccessful (Manuel López-Ibáñez)</p></li>
 <li><p>Print where irace is installed with <code>--help</code>. (Manuel López-Ibáñez)</p></li>
-<li><p>irace will now complain if the output of target-runner or target-evaluator contains extra lines even if the first line of output is correct. This is to avoid parsing the wrong output. Unfortunately, this may break setups that relied on this behavior. The solution is to only print the output that irace expects. (Manuel López-Ibáñez)</p></li>
+<li><p>irace will now complain if the output of <code>target-runner</code> or <code>target-evaluator</code> contains extra lines even if the first line of output is correct. This is to avoid parsing the wrong output. Unfortunately, this may break setups that relied on this behavior. The solution is to only print the output that irace expects. (Manuel López-Ibáñez)</p></li>
 <li><p>Completely re-implement <code>log</code> parameters to fix several bugs. Domains that contain zero or negative values are now rejected. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 <li><p>New option <code>aclib=</code> (<code>--aclib 1</code>) enables compatibility with the GenericWrapper4AC (<a href="https://github.com/automl/GenericWrapper4AC/" class="uri">https://github.com/automl/GenericWrapper4AC/</a>) used by AClib (<a href="http://aclib.net/" class="uri">http://aclib.net/</a>). This is EXPERIMENTAL. <code>--aclib 1</code> also sets digits to 15 for compatibility with AClib defaults. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix printing of output when capping is enabled. (Manuel López-Ibáñez)</p></li>
@@ -175,7 +175,7 @@
 <li><p>New function <code><a href="../reference/scenario.update.paths.html">scenario.update.paths()</a></code> (Manuel López-Ibáñez)</p></li>
 <li><p>Fix assert failure that may happen when <code>elitistNewInstances</code> is larger than <code>firstTest</code>. Reported by Jose Riveaux. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix bug in <code>checkTargetFiles()</code> (<code>--check</code>) with capping. (Leslie Pérez Cáceres)</p></li>
-<li><p>Clarify a few errors/warnings when <code>maxTime</code> &gt; 0. (Manuel López-Ibáñez, suggested by Haroldo Gambini Santos)</p></li>
+<li><p>Clarify a few errors/warnings when <code>maxTime &gt; 0</code>. (Manuel López-Ibáñez, suggested by Haroldo Gambini Santos)</p></li>
 </ul>
 </div>
     <div id="irace-3-1-12072018" class="section level1">
@@ -216,7 +216,7 @@
 <li><p>Several fixes for handling paths in Windows. (Manuel López-Ibáñez)</p></li>
 <li><p><code><a href="../reference/readConfigurationsFile.html">readConfigurationsFile()</a></code> now has a <code>text=</code> argument, which allows reading configurations from a string. (Manuel López-Ibáñez)</p></li>
 <li><p>User-provided functions (targetRunner, targetEvaluator and repairConfiguration) and user-provided conditions for forbidden configurations are now byte-compiled when read, which should make their evaluation noticeably faster. (Manuel López-Ibáñez)</p></li>
-<li><p>The argument ‘experiment’ passed to the R function targetRunner does not contain anymore an element ‘extra.params’. Similarly, the ‘scenario’ structure does not contain anymore the elements ‘instances.extra.params’ and ‘testInstances.extra.params’. Any instance-specific parameters values now form part of the character string that defines an instance and it is up to the user-defined targetRunner to parse them appropriately. These changes make no difference when targetRunner is an external script, or when instances and instance-specific parameter values are read from a file. (Manuel López-Ibáñez)</p></li>
+<li><p>The argument <code>'experiment'</code> passed to the R function <code>targetRunner</code> does not contain anymore an element <code>'extra.params'</code>. Similarly, the <code>'scenario'</code> structure does not contain anymore the elements <code>'instances.extra.params'</code> and <code>'testInstances.extra.params'</code>. Any instance-specific parameters values now form part of the character string that defines an instance and it is up to the user-defined <code>targetRunner</code> to parse them appropriately. These changes make no difference when targetRunner is an external script, or when instances and instance-specific parameter values are read from a file. (Manuel López-Ibáñez)</p></li>
 </ul>
 </div>
     <div id="irace-2-3" class="section level1">
@@ -224,7 +224,7 @@
 <a href="#irace-2-3" class="anchor"></a>irace 2.3<small> 2017-04-26 </small>
 </h1>
 <ul>
-<li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to targetEvaluator as experiments, even if no call to targetRunner was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li>
+<li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to <code>targetEvaluator</code> as experiments, even if no call to <code>targetRunner</code> was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li>
 </ul>
 </div>
     <div id="irace-2-2" class="section level1">
@@ -234,7 +234,7 @@
 <ul>
 <li><p>Command-line parameters are printed to stdout (useful for future replications). (Manuel López-Ibáñez, suggested by Markus Wagner)</p></li>
 <li><p>Users may provide a function to repair configurations before being evaluated. See the scenario variable repairConfiguration. (Manuel López-Ibáñez)</p></li>
-<li><p>The option <code>--sge-cluster</code> (<code>sgeCluster</code>) was removed and replaced by <code>--batchmode</code> (<code>batchmode</code>). It is now the responsibility of the target-runner to parse the output of the batch job submission command (e.g., qsub or squeue), and return just the job ID. Values supported are: “sge”, “torque”, “pbs” and “slurm”. (Manuel López-Ibáñez)</p></li>
+<li><p>The option <code>--sge-cluster</code> (<code>sgeCluster</code>) was removed and replaced by <code>--batchmode</code> (<code>batchmode</code>). It is now the responsibility of the target-runner to parse the output of the batch job submission command (e.g., <code>qsub</code> or <code>squeue</code>), and return just the job ID. Values supported are: “sge”, “torque”, “pbs” and “slurm”. (Manuel López-Ibáñez)</p></li>
 <li><p>The option <code>--parallel</code> can now be combined with <code>--batchmode</code> to limit the number of jobs submitted by irace at once. This may be useful in batch clusters that have a small queue of jobs. (Manuel López-Ibáñez)</p></li>
 <li><p>New examples under <code>inst/examples/batchmode-cluster/</code>. (Manuel López-Ibáñez)</p></li>
 <li>
@@ -246,17 +246,17 @@
 <li><p>Restrict the number of maximum configurations per race to 1024. (Leslie Pérez Cáceres)</p></li>
 <li><p>Do not warn if the last line in the instance file does not terminate with a newline. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix bug when <code>deterministic == 1</code>. (Manuel López-Ibáñez, Leslie Pérez Cáceres)</p></li>
-<li><p>Update manual and vignette with details about the expected arguments and return value of targetRunner and targetEvaluator. (Manuel López-Ibáñez)</p></li>
+<li><p>Update manual and vignette with details about the expected arguments and return value of <code>targetRunner</code> and <code>targetEvaluator</code>. (Manuel López-Ibáñez)</p></li>
 <li><p>Many updates to the User Guide vignette. (Manuel López-Ibáñez)</p></li>
-<li><p>Fix \dontrun example in irace-package.Rd (Manuel López-Ibáñez)</p></li>
-<li><p>Fix bug: If testInstances contains duplicates, results of testing are not correctly saved in <code>iraceResults$testing$experiments</code> nor reported correctly at the end of a run. Now unique IDs of the form 1t, 2t, … are used for each testing instance. These IDs are used for the rownames of <code>iraceResults$testing$experiments</code> and the names of the <code>scenario$testInstances</code> and <code>iraceResults$testing$seeds</code> vectors. (Manuel López-Ibáñez)</p></li>
-<li><p>Fix bug where irace keeps retrying the target-runner call even if it succeeds. (Manuel López-Ibáñez)</p></li>
+<li><p>Fix <code>\dontrun</code> example in <code>irace-package.Rd</code> (Manuel López-Ibáñez)</p></li>
+<li><p>Fix bug: If testInstances contains duplicates, results of testing are not correctly saved in <code>iraceResults$testing$experiments</code> nor reported correctly at the end of a run. Now unique IDs of the form <code>1t, 2t, ...</code> are used for each testing instance. These IDs are used for the rownames of <code>iraceResults$testing$experiments</code> and the names of the <code>scenario$testInstances</code> and <code>iraceResults$testing$seeds</code> vectors. (Manuel López-Ibáñez)</p></li>
+<li><p>Fix bug where irace keeps retrying the <code>target-runner</code> call even if it succeeds. (Manuel López-Ibáñez)</p></li>
 <li>New command-line parameter</li>
 </ul>
 <pre><code>       --only-test FILE</code></pre>
 <p>which just evaluates the configurations given in FILE on the testing instances defined by the scenario. Useful if you decide on the testing instances only after running irace. (Manuel López-Ibáñez)</p>
 <ul>
-<li>Bugfix: When using maxTime != 0, the number of experiments performed may be miscounted in some cases. (Manuel López-Ibáñez)</li>
+<li>Bugfix: When using <code>maxTime != 0</code>, the number of experiments performed may be miscounted in some cases. (Manuel López-Ibáñez)</li>
 </ul>
 </div>
     <div id="irace-2-1" class="section level1">
@@ -284,8 +284,8 @@
 <code>t-test-holm</code> (t-test with Holm’s correction for multiple comparisons)</li>
 </ul>
 </li>
-<li><p>MPI does not create log files with –debug-level 0. (Manuel López-Ibáñez)</p></li>
-<li><p>For simplicity, the parallel-irace-* scripts do not use an auxiliary <code>tune-main</code> script. For customizing them, make a copy and edit them directly. (Manuel López-Ibáñez)</p></li>
+<li><p>MPI does not create log files with <code>--debug-level 0</code>. (Manuel López-Ibáñez)</p></li>
+<li><p>For simplicity, the <code>parallel-irace-*</code> scripts do not use an auxiliary <code>tune-main</code> script. For customizing them, make a copy and edit them directly. (Manuel López-Ibáñez)</p></li>
 <li>New parameters: (Manuel López-Ibáñez)</li>
 </ul>
 <pre><code>--target-runner-retries : Retry target-runner this many times in case of error.</code></pre>
@@ -330,10 +330,10 @@
 <a href="#irace-1-07" class="anchor"></a>irace 1.07<small> 2015-09-11 </small>
 </h1>
 <ul>
-<li><p>The best configurations found, either at the end or at each iteration of an irace run, can now be applied to a set of test instances different from the training instances. See options testInstanceDir, testInstanceFile, testNbElites, and testIterationElites. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
-<li><p>The R interfaces of hookRun, hookEvaluate and hookRunParallel have changed. See <code>help(hook.run.default)</code> and <code>help(hook.evaluate.default)</code> for examples of the new interfaces.</p></li>
+<li><p>The best configurations found, either at the end or at each iteration of an irace run, can now be applied to a set of test instances different from the training instances. See options <code>testInstanceDir</code>, <code>testInstanceFile</code>, <code>testNbElites</code>, and <code>testIterationElites</code>. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
+<li><p>The R interfaces of <code>hookRun</code>, <code>hookEvaluate</code> and <code>hookRunParallel</code> have changed. See <code>help(hook.run.default)</code> and <code>help(hook.evaluate.default)</code> for examples of the new interfaces.</p></li>
 <li><p>Printing of race progress now reports the actual configuration and instance IDs, and numbers are printed in a more human-readable format. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
-<li><p>Reduce memory use for very large values of maxExperiments. (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)</p></li>
+<li><p>Reduce memory use for very large values of <code>maxExperiments</code>. (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)</p></li>
 <li><p>New option <code>--load-balancing</code> (<code>loadBalancing</code>) for disabling load-balancing when executing jobs in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)</p></li>
 <li><p>The option <code>--parallel</code> in Windows now uses load-balancing by default. (Manuel López-Ibáñez)</p></li>
 <li><p>The wall-clock time after finishing each task is printed in the output. (Manuel López-Ibáñez, thanks to Federico Caselli for providing an initial patch)</p></li>
@@ -349,8 +349,8 @@
 <li>
 <p>New configuration options, mainly for R users:</p>
 <ul>
-<li><p>hookRunParallel: Optional R function to provide custom parallelization of hook.run.</p></li>
-<li><p>hookRunData: Optional data passed to hookRun. This is ignored by the default hookRun function, but it may be used by custom hookRun R functions to pass persistent data around. (Manuel López-Ibáñez)</p></li>
+<li><p><code>hookRunParallel</code>: Optional R function to provide custom parallelization of <code>hook.run</code>.</p></li>
+<li><p><code>hookRunData</code>: Optional data passed to <code>hookRun</code>. This is ignored by the default <code>hookRun</code> function, but it may be used by custom <code>hookRun</code> R functions to pass persistent data around. (Manuel López-Ibáñez)</p></li>
 </ul>
 </li>
 </ul>
@@ -365,7 +365,7 @@
 <li><p>The option <code>--parallel</code> (without <code>--mpi</code>) now works under Windows. (Manuel López-Ibáñez, thanks to Pablo Valledor Pellicer for testing it)</p></li>
 <li><p>Improved error handling when running under Rmpi. Now irace will terminate as soon as the master node detects at least one failed slave node. This avoids irace reporting two times the same error. Also, irace will print all the unique errors returned by all slaves and not just the first one. (Manuel López-Ibáñez)</p></li>
 <li><p>Forbidden configurations may be specified in terms of constraints on their values. Forbidden configurations will never be evaluated by irace. See <code>--forbidden-file</code> and <code>inst/templates/forbidden.tmpl</code>. (Manuel López-Ibáñez)</p></li>
-<li><p>New option <code>--recovery-file</code> (recoveryFile) allows resuming a previous irace run. (Leslie Pérez Cáceres)</p></li>
+<li><p>New option <code>--recovery-file</code> (<code>recoveryFile</code>) allows resuming a previous irace run. (Leslie Pérez Cáceres)</p></li>
 <li><p>The confidence level for the elimination test is now configurable with parameter <code>--confidence</code>. (Leslie Pérez Cáceres)</p></li>
 <li><p>Much more robust handling of relative/absolute paths. Improved support for Windows. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 <li>Provide better error messages for incorrect parameter descriptions. (Manuel López-Ibáñez) Examples:</li>
@@ -376,7 +376,7 @@
     x "" c ("a", "a")   # duplicated values</code></pre>
 <ul>
 <li><p>Print elapsed time for calls to hook-run if <code>debugLevel &gt;=1</code>. (Manuel López-Ibáñez)</p></li>
-<li><p><code>examples/hook-run-python/hook-run</code>: A multi-purpose hook-run written in Python. (Franco Mascia)</p></li>
+<li><p><code>examples/hook-run-python/hook-run</code>: A multi-purpose <code>hook-run</code> written in Python. (Franco Mascia)</p></li>
 <li><p>Parallel mode in an SGE cluster (<code>--sge-cluster</code>) is more robust. (Manuel López-Ibáñez)</p></li>
 </ul>
 </div>
@@ -407,7 +407,7 @@
 </h1>
 <ul>
 <li><p>More concise output.</p></li>
-<li><p>The parameters expName and expDescription are now useless and they were removed.</p></li>
+<li><p>The parameters <code>expName</code> and <code>expDescription</code> are now useless and they were removed.</p></li>
 <li><p>Faster computation of similar candidates (Jeremie Dubois-Lacoste and Leslie Pérez Cáceres).</p></li>
 <li><p>Fix bug when saving instances in <code>tunerResults$experiments</code>.</p></li>
 <li><p><code><a href="../reference/irace.cmdline.html">irace.cmdline ("--help")</a></code> does not try to quit R anymore.</p></li>
