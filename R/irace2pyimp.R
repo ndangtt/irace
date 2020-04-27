@@ -473,7 +473,7 @@ irace2pyimp_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     return(invisible(NULL))
   }
   argvalues <- lapply(rownames(.irace2pyimp_args), parser$readCmdLineParameter)
-  names(argv) <- rownames(.irace2pyimp_args)
+  names(argvalues) <- rownames(.irace2pyimp_args)
 
   irace2pyimp(file = argvalues$iraceRdataFile, normalise = argvalues$normalise,
               outdir = argvalues$outDir,
