@@ -155,10 +155,12 @@ remove_fixed_parameters <- function(rdata)
     # Go over 'names','types','switches','hierarchy', etc and keep only
     # varParams (except for elements that contain a single value as
     # $nbParameters)
+    lsAllParams <- parameters$names
     parameters <- lapply(parameters, function(x) {
       if (length(x) == 1) return(x)
       else return(x[varParams])
     })
+    parameters$names <- setdiff(lsAllParams, fixedParams)
     parameters$nbParameters <- parameters$nbParameters - length(fixedParams)
     parameters <- rdata$parameters <- parameters
     rdata$allConfigurations <- rdata$allConfigurations[, varParams]
