@@ -162,8 +162,8 @@ remove_fixed_parameters <- function(rdata)
     })
     parameters$names <- setdiff(lsAllParams, fixedParams)
     parameters$nbParameters <- parameters$nbParameters - length(fixedParams)
-    parameters <- rdata$parameters <- parameters
-    rdata$allConfigurations <- rdata$allConfigurations[, varParams]
+    parameters <- rdata$parameters <- parameters    
+    rdata$allConfigurations <- rdata$allConfigurations[, setdiff(colnames(rdata$allConfigurations),fixedParams)]
   }
   return (rdata)
 }
@@ -186,11 +186,14 @@ generate_pcs_file <- function(file, parameters, defaultConfiguration)
     if (is.na(val)) val <- domain[1]
     
     if (type %in% c('r','i')) {
-      line <- paste0(param, ' [', domain[1], ',',domain[2],'] [', val, ']',
-                  if (type == 'i') 'i' else '',
-                  if (isLogTransform) 'l' else '')
+      if (type=='i')
+        sType <- 'integer'
+      else
+        sType <- 'real'
+      line <- paste0(param, ' ', sType, ' [', domain[1], ',',domain[2],'] [', val, ']',
+                  if (isLogTransform) ' log' else '')
     } else {
-      line <- paste0(param, ' {', paste(domain, collapse = ','), '} [', val, ']')
+      line <- paste0(param, ' categorical {', paste(domain, collapse = ','), '} [', val, ']')
     }
     paramlines <- c(paramlines, line)
   }
