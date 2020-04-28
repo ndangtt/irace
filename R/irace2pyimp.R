@@ -61,6 +61,11 @@ load_irace_rdata <- function(filename)
   # Some fields are not present in the old version of irace, so we assign them as new version's default values
   if ('capping' %!in% names(iraceResults$scenario))
     iraceResults$scenario$capping <- FALSE
+
+  # replace "," by "." in instance names, as smac format doesn't allow it
+  iraceResults$scenario$instances <- sapply(iraceResults$scenario$instances, function(x) sub(",",".",x))
+  if (length(names(iraceResults$scenario$instances))>0)
+    names(iraceResults$scenario$instances) <- sapply(names(iraceResults$scenario$instances), function(x) sub(",",".",x))
   
   return(iraceResults)
 }
